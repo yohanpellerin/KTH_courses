@@ -1,0 +1,50 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# generation of data that can be used for binary classification (two classes) in 2D.
+n=100
+mA = np.array([1,1])
+sigmaA = 0.5
+mB = np.array([-1,-1])
+sigmaB = 0.5
+classA = np.zeros((n,2))
+classB = np.zeros((n,2))
+classA[:,0] = np.random.normal(mA[0],sigmaA,n)
+classA[:,1] = np.random.normal(mA[1],sigmaA,n)
+classB[:,0] = np.random.normal(mB[0],sigmaB,n)
+classB[:,1] = np.random.normal(mB[1],sigmaB,n)
+
+# plot the data
+plt.plot(classA[:,0],classA[:,1],'r.')
+plt.plot(classB[:,0],classB[:,1],'b.')
+plt.axis('equal') # make axis equal
+#plt.show()
+
+#implementation of the perceptron algorithm
+#input: classA, classB, n (number of iterations)
+#output: w (weight vector), b (bias)
+def perceptron(classA,classB,epochs,learning_rate=1):
+    # initialization of the weight vector and bias
+    w = np.zeros(2)
+    b = 0
+    n = len(classA)
+    # loop for n iterations
+    for i in range(epochs):
+        # create a list of ramdom ordered indices
+        indices = np.random.permutation(2*n)
+        for j in indices:
+            # select a random point
+            if j < n:
+                x = classA[j,:]
+                target = 1
+            else:
+                x = classB[j-n,:]
+                target = -1
+            # check if the point is correctly classified
+            if target*(np.dot(w,x)+b) <= 0:
+                # update the weight vector and bias
+                w = w + learning_rate*target*x
+                b = b + learning_rate*target
+    return w,b
+
+
